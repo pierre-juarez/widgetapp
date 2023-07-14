@@ -18,7 +18,7 @@ var dataJSONAll: [modelData] = [] // FIXME: (a)
 
 // Provider
 struct Provider: TimelineProvider{
-  
+    
     
     func placeholder(in context: Context) -> Model {
         return Model(date: Date(), data: dataJSONAll)  // FIXME: (b)
@@ -46,12 +46,65 @@ struct Provider: TimelineProvider{
 // Design - View
 struct WidgetView: View{
     let entry: Provider.Entry
+    @Environment(\.widgetFamily) var family
+    
+    @ViewBuilder
     var body: some View{
-        VStack(alignment: .leading){
-            Text("List of items").font(.title).bold()
-            ForEach(entry.data, id: \.id) { item in
-                Text("\(item.id) - \(item.name)").bold()
-                Text(item.email)
+        //        VStack(alignment: .leading){
+        //            Text("List of items").font(.title).bold()
+        //            ForEach(entry.data, id: \.id) { item in
+        //                Text("\(item.id) - \(item.name)").bold()
+        //                Text(item.email)
+        //            }
+        //        }
+        switch family {
+        case .systemSmall:
+            VStack(alignment: .center){
+                Text("My list")
+                    .font(.largeTitle)
+                    .foregroundColor(.white)
+                    .bold()
+                    .frame(maxWidth: .infinity)
+                    .background(Color.blue)
+                Spacer()
+                Text(String(entry.data.count))
+                    .font(.custom("Arial-Bold", size: 80))
+                    .bold()
+                Spacer()
+            }
+        case .systemMedium:
+            VStack(alignment: .center){
+                Text("My list")
+                    .font(.largeTitle)
+                    .foregroundColor(.white)
+                    .bold()
+                    .frame(maxWidth: .infinity)
+                    .background(Color.blue)
+                Spacer()
+                VStack(alignment: .leading){
+                    Text(entry.data[0].name).bold()
+                    Text(entry.data[0].email)
+                    Text(entry.data[1].name).bold()
+                    Text(entry.data[1].email)
+                }.padding(.leading)
+                Spacer()
+            }
+        default:
+            VStack(alignment: .center){
+                Text("My list")
+                    .font(.largeTitle)
+                    .foregroundColor(.white)
+                    .bold()
+                    .frame(maxWidth: .infinity)
+                    .background(Color.blue)
+                Spacer()
+                VStack(alignment: .leading){
+                    ForEach(entry.data, id: \.id) { item in
+                        Text("\(item.id) - \(item.name)").bold()
+                        Text(item.email)
+                    }
+                }.padding(.leading)
+                Spacer()
             }
         }
     }
@@ -64,9 +117,9 @@ struct HelloWidget: Widget{
             WidgetView(entry: itemEntry)
         }.description("A simple widget...")
             .configurationDisplayName("Widget App 🚀")
-            .supportedFamilies([.systemLarge])
+            .supportedFamilies([.systemLarge, .systemSmall, .systemMedium])
     }
-
+    
 }
 
 // Model Data
